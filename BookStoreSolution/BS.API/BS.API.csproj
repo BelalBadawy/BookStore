@@ -4,12 +4,22 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>E:\LearningApps\BookStore\BookStoreSolution\BS.API\BS.API.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\BS.Application\BS.Application.csproj" />
+    <ProjectReference Include="..\BS.Domain\BS.Domain.csproj" />
+    <ProjectReference Include="..\BS.Infrastructure.Data\BS.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\BS.Infrastructure.Shared\BS.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
 </Project>
