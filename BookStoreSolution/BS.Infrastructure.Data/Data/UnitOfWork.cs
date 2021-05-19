@@ -5,17 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using BookStoreStore.Infrastructure.Data;
 using BS.Application.Interfaces;
+using BS.Infrastructure.Data.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BS.Infrastructure.Data.Data
 {
-    public class UnitOfWork :  IUnitOfWork  , IDisposable
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private Dictionary<(Type type, string name), object> _repositories;
-
+        private Dictionary<Type, object> _repositories;
+        public DbContext _context { get; }
         public UnitOfWork(DbContext context)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -23,16 +24,42 @@ namespace BS.Infrastructure.Data.Data
         /// </summary>
         /// <typeparam name="TEntity">The entity type to initialize with</typeparam>
         /// <returns>An initialized repository</returns>
-        public RepositoryType Repository<RepositoryType>()
+        public RepositoryType Repository<RepositoryType>() where RepositoryType : class
         {
-            return (RepositoryType)GetOrAddRepository(typeof(RepositoryType), new Repository<RepositoryType>(Context));
+            // return (RepositoryType) GetOrAddRepository(typeof(RepositoryType), new RepositoryType(Context));
+
+            var interfaceType = typeof(RepositoryType);
+
+
+            if (_repositories == null)
+            {
+                _repositories = new Dictionary<Type, object>();
+
+
+            }
+            var type = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(x => x.GetInterface(interfaceType.Name) != null).FirstOrDefault();
+
+            if (type != null)
+            {
+                if (!_repositories.ContainsKey(interfaceType))
+                {
+                    _repositories[interfaceType] = Activator.CreateInstance(type, _context);
+                }
+
+                return (RepositoryType)_repositories[interfaceType];
+
+            }
+
+            return null;
         }
 
-        public DbContext Context { get; }
+
 
         public async Task<int> CommitAsync()
         {
-            return await Context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -40,22 +67,22 @@ namespace BS.Infrastructure.Data.Data
         /// </summary>
         public void Dispose()
         {
-            Context?.Dispose();
+            _context?.Dispose();
         }
 
-        internal object GetOrAddRepository(Type type, object repo)
-        {
-            // Initialize dictionary if it is null
-            _repositories ??= new Dictionary<(Type type, string Name), object>();
+        //internal object GetOrAddRepository(Type type, object repo)
+        //{
+        //    // Initialize dictionary if it is null
+        //    _repositories ??= new Dictionary<(Type type, string Name), object>();
 
-            // Pull out the repository if it exists
-            if (_repositories.TryGetValue((type, repo.GetType().FullName), out var repository)) return repository;
+        //    // Pull out the repository if it exists
+        //    if (_repositories.TryGetValue((type, repo.GetType().FullName), out var repository)) return repository;
 
-            // Add the repository to the dictionary
-            _repositories.Add((type, repo.GetType().FullName), repo);
-            return repo;
-        }
+        //    // Add the repository to the dictionary
+        //    _repositories.Add((type, repo.GetType().FullName), repo);
+        //    return repo;
+        //}
 
-     
+
     }
 }

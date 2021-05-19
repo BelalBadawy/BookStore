@@ -6,7 +6,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using BookStoreStore.Infrastructure.Data;
 using BookStoreStore.Infrastructure.Data.Initializer;
+using BS.Application.Interfaces;
+using BS.Application.Interfaces.Repositories;
 using BS.Domain.Entities;
+using BS.Infrastructure.Data.Data;
+using BS.Infrastructure.Data.Data.Repositories;
 
 
 namespace BookStoreStore.Infrastructure
@@ -36,14 +40,18 @@ namespace BookStoreStore.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddScoped<DbContext, ApplicationDbContext>();
 
-            services.AddScoped<IRepositoryFactory, UnitOfWork<ApplicationDbContext>>();
-            //services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IBookCategoryRepositoryAsync, BookCategoryRepositoryAsync>();
 
             services.AddScoped<IDbInitializer, DbInitializer>();
 
+
+
             return services;
         }
-     
+
     }
 }
