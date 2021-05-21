@@ -120,5 +120,25 @@ namespace BS.Application.Services.Implementations
             return _mapper.Map<List<BookCategoryReadDto>>(result);
         }
 
+
+        public async Task<PagedResult<BookCategoryReadDto>> GetPagedListAsync(Expression<Func<BookCategory, bool>> predicate = null,
+            Func<IQueryable<BookCategory>, IOrderedQueryable<BookCategory>> orderBy = null, int pageIndex = 0, int pageSize = 10, params Expression<Func<BookCategory, object>>[] includes)
+        {
+            var pagedResult = new PagedResult<BookCategoryReadDto>();
+
+            var result = await _unitOfWork.Repository<IBookCategoryRepositoryAsync>().GetPagedListAsync(predicate, orderBy, pageIndex, pageSize, includes);
+            if (result != null)
+            {
+                pagedResult.TotalCount = result.TotalCount;
+                pagedResult.FilteredTotalCount = result.FilteredTotalCount;
+
+                if (result.Data != null && result.Data.Count > 0)
+                {
+                    pagedResult.Data = _mapper.Map<List<BookCategoryReadDto>>(result.Data);
+                }
+            }
+
+            return pagedResult;
+        }
     }
 }

@@ -4,7 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using BookStore.Application.Extensions;
+using BS.Application.Dtos;
 using BS.Application.Interfaces;
+using BS.Domain.Common;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace BS.Infrastructure.Data.Data
@@ -60,6 +64,27 @@ namespace BS.Infrastructure.Data.Data
             return orderBy != null ? await orderBy(query).ToListAsync() : await query.ToListAsync();
         }
 
+        public async Task<PagedResult<T>> GetPagedListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int pageIndex = 0, int pageSize = 10, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = DbSet;
+            query = query.AsNoTracking();
+
+            foreach (Expression<Func<T, object>> include in includes)
+                query = query.Include(include);
+
+            if (predicate != null) query = query.Where(predicate);
+
+            //  return orderBy != null ? await orderBy(query).ToListAsync() : await query.ToListAsync();
+
+            var pagedResult = new PagedResult<T>();
+            pagedResult.TotalCount = await DbSet.CountAsync();
+            pagedResult.FilteredTotalCount = await query.CountAsync();
+            pagedResult.Data = (orderBy != null ? await orderBy(query).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync() : await query.Skip((pageIndex -1) * pageSize).Take(pageSize).ToListAsync());
+
+            return pagedResult;
+        }
+
+
         public async Task<T> AddAsync(T entity)
         {
             await DbSet.AddAsync(entity);
@@ -102,5 +127,7 @@ namespace BS.Infrastructure.Data.Data
         {
             DbContext?.Dispose();
         }
+
+
     }
 }
