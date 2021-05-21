@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookStoreStore.Infrastructure.Data;
 using BS.API.Infrastructure;
+using BS.Application.Dtos;
 using BS.Application.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,13 @@ namespace BS.API.Controllers
         {
 
             _bookCategoryService = bookCategoryService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<BookCategoryReadDto>))]
+        public async Task<ActionResult> GetBookCategories()
+        {
+            return Ok(await _bookCategoryService.GetAllAsync());
         }
     }
 }

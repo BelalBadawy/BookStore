@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookStoreStore.Infrastructure;
 using BS.Application;
+using BS.Infrastructure.Shared;
 
 namespace BS.API
 {
@@ -30,6 +31,7 @@ namespace BS.API
         {
 
             services.AddApplication();
+            services.AddSharedInfrastructure();
             services.AddInfrastructure(Configuration);
 
 

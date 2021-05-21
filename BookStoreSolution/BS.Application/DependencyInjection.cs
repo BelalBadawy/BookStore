@@ -1,4 +1,5 @@
 using System.Reflection;
+using BS.Application.Interfaces;
 using BS.Application.Services.Implementations;
 using BS.Application.Services.Interfaces;
 using FluentValidation;
@@ -13,7 +14,7 @@ namespace BS.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient<IBookCategoryService, BookCategoryService>();
-
+          
             return services;
         }
     }
