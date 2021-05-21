@@ -19,6 +19,7 @@
     <ProjectReference Include="..\BS.Application\BS.Application.csproj" />
     <ProjectReference Include="..\BS.Domain\BS.Domain.csproj" />
     <ProjectReference Include="..\BS.Infrastructure.Data\BS.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\BS.Infrastructure.Identity\BS.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\BS.Infrastructure.Shared\BS.Infrastructure.Shared.csproj" />
   </ItemGroup>
 

@@ -116,7 +116,7 @@ namespace BS.Application.Services.Implementations
         public async Task<List<BookCategoryReadDto>> GetAllAsync(Expression<Func<BookCategory, bool>> predicate = null,
             Func<IQueryable<BookCategory>, IOrderedQueryable<BookCategory>> orderBy = null, params Expression<Func<BookCategory, object>>[] includes)
         {
-            var result = _unitOfWork.Repository<IBookCategoryRepositoryAsync>().GetAllAsync(predicate, orderBy, includes);
+            var result = await _unitOfWork.Repository<IBookCategoryRepositoryAsync>().GetAllAsync(predicate, orderBy, includes);
             return _mapper.Map<List<BookCategoryReadDto>>(result);
         }
 

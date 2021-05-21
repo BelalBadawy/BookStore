@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using BookStoreStore.Infrastructure;
 using BS.Application;
 using BS.Infrastructure.Shared;
+using BS.Infrastructure.Identity;
 
 namespace BS.API
 {
@@ -31,6 +32,7 @@ namespace BS.API
         {
 
             services.AddApplication();
+            services.AddIdentityInfrastructure();
             services.AddSharedInfrastructure();
             services.AddInfrastructure(Configuration);
 
