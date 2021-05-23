@@ -46,7 +46,9 @@ namespace BookStoreStore.Infrastructure
 
             services.AddScoped<IBookCategoryRepositoryAsync, BookCategoryRepositoryAsync>();
 
-            services.AddScoped<IDbInitializer, DbInitializer>();
+         //   services.AddScoped<IDbInitializer, DbInitializer>();
+
+
 
 
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using BS.Domain.Common;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BS.Application.Interfaces
 {
@@ -18,12 +20,7 @@ namespace BS.Application.Interfaces
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             params Expression<Func<T, object>>[] includes);
 
-        //Task<IPaginate<T>> GetListAsync(
-        //    Expression<Func<T, bool>> predicate = null,
-        //    Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-        //    int index = 0,
-        //    int size = 10,
-        //    params Expression<Func<T, object>>[] includes);
+        Task<PagedResult<T>> GetPagedListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int pageIndex = 0, int pageSize = 10, params Expression<Func<T, object>>[] includes);
 
         Task<T> GetAsync(object id);
 

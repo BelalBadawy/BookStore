@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookStoreStore.Infrastructure;
+using BS.Application;
+using BS.Infrastructure.Shared;
+using BS.Infrastructure.Identity;
 
 namespace BS.API
 {
@@ -26,6 +30,22 @@ namespace BS.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddApplication();
+            services.AddIdentityInfrastructure();
+            services.AddSharedInfrastructure();
+            services.AddInfrastructure(Configuration);
+
+
+            services.AddHttpContextAccessor();
+
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+            });
+            services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
