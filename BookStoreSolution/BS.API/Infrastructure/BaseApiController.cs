@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace BS.API.Infrastructure
 {
@@ -12,6 +13,11 @@ namespace BS.API.Infrastructure
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class BaseApiController : ControllerBase
     {
-
+     
+        public BaseApiController()
+        {
+           
+        }
+       
     }
 }
