@@ -15,14 +15,14 @@ namespace BS.Infrastructure.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         private readonly IDateTimeService _dateTime;
-        private readonly IAuthenticationService _authenticatedUser;
+        private readonly IAuthService _authenticatedUser;
         private IHttpContextAccessor _httpContextAccessor;
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options, 
             IHttpContextAccessor httpContextAccessor, 
             IDateTimeService dateTime, 
-            IAuthenticationService authenticatedUser
+            IAuthService authenticatedUser
             ) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;

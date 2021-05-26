@@ -29,7 +29,10 @@ namespace BS.Infrastructure
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<DbContext, ApplicationDbContext>();
+
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
 
             services.AddDbContext<ApplicationDbContext>(options =>
 
@@ -38,7 +41,7 @@ namespace BS.Infrastructure
                 serverOptions =>
                 {
                     serverOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-                }));
+                }), ServiceLifetime.Scoped);
 
 
 
@@ -46,13 +49,13 @@ namespace BS.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddScoped<DbContext, ApplicationDbContext>();
+
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IBookCategoryRepositoryAsync, BookCategoryRepositoryAsync>();
 
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IDateTimeService, DateTimeService>();
 
 

@@ -8,7 +8,7 @@ using BS.Domain.Models;
 
 namespace BS.Application.Interfaces
 {
-    public interface IAuthenticationService
+    public interface IAuthService
     {
         Guid? UserId { get; }
 
