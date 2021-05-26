@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BS.Infrastructure.Identity.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthService : IAuthService
     {
         public Guid? UserId => null;
 
@@ -24,13 +24,15 @@ namespace BS.Infrastructure.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtSettings _jwtSettings;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager,
-            IOptions<JwtSettings> jwtSettings,
-            SignInManager<ApplicationUser> signInManager)
+        public AuthService(
+            //UserManager<ApplicationUser> userManager,
+            IOptions<JwtSettings> jwtSettings
+           // SignInManager<ApplicationUser> signInManager
+            )
         {
-            _userManager = userManager;
+         //   _userManager = userManager;
             _jwtSettings = jwtSettings.Value;
-            _signInManager = signInManager;
+           // _signInManager = signInManager;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(LoginRequest userRequest)
