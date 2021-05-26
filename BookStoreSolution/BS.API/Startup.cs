@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookStoreStore.Infrastructure;
+using BS.API.Middleware;
 using BS.Application;
 using BS.Infrastructure.Shared;
 using BS.Infrastructure.Identity;
@@ -48,6 +49,12 @@ namespace BS.API
             services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 
             services.AddControllers();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BS.API", Version = "v1" });
@@ -67,6 +74,12 @@ namespace BS.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseAuthorization();
+
+            app.UseCustomExceptionHandler();
+
+            app.UseCors("Open");
 
             app.UseAuthorization();
 
