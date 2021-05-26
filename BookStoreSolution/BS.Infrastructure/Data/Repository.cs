@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using BookStore.Application.Extensions;
-using BS.Application.Dtos;
 using BS.Application.Interfaces;
 using BS.Domain.Common;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace BS.Infrastructure.Data.Data
+namespace BS.Infrastructure.Data
 {
     public class Repository<T> : IGenericRepositoryAsync<T> where T : class
     {

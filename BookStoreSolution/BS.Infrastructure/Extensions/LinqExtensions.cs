@@ -1,11 +1,9 @@
-
-
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using BS.Domain.Common;
 
-namespace BookStore.Application.Extensions
+namespace BS.Infrastructure.Extensions
 {
    public static class LinqExtensions
     {

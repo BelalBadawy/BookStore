@@ -1,34 +1,29 @@
-
-
-
-
-using Microsoft.Data.SqlClient;
-
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 using System.Threading;
+using System.Threading.Tasks;
 using BS.Application.Interfaces;
 using BS.Domain.Common;
 using BS.Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreStore.Infrastructure.Data
+namespace BS.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         private readonly IDateTimeService _dateTime;
-        private readonly IAuthenticatedUserService _authenticatedUser;
+        private readonly IAuthenticationService _authenticatedUser;
         private IHttpContextAccessor _httpContextAccessor;
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor, IDateTimeService dateTime, IAuthenticatedUserService authenticatedUser) : base(options)
+        public ApplicationDbContext(
+            DbContextOptions<ApplicationDbContext> options, 
+            IHttpContextAccessor httpContextAccessor, 
+            IDateTimeService dateTime, 
+            IAuthenticationService authenticatedUser
+            ) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             _dateTime = dateTime;
