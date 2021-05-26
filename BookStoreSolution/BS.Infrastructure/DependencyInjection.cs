@@ -50,7 +50,7 @@ namespace BS.Infrastructure
                 .AddDefaultTokenProviders();
 
 
-
+            services.AddTransient<UserManager<ApplicationUser>>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IBookCategoryRepositoryAsync, BookCategoryRepositoryAsync>();

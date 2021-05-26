@@ -24,15 +24,16 @@ namespace BS.Infrastructure.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtSettings _jwtSettings;
 
+
         public AuthService(
-            //UserManager<ApplicationUser> userManager,
-            IOptions<JwtSettings> jwtSettings
-           // SignInManager<ApplicationUser> signInManager
+            UserManager<ApplicationUser> userManager,
+            IOptions<JwtSettings> jwtSettings,
+            SignInManager<ApplicationUser> signInManager
             )
         {
-         //   _userManager = userManager;
+            _userManager = userManager;
             _jwtSettings = jwtSettings.Value;
-           // _signInManager = signInManager;
+            _signInManager = signInManager;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(LoginRequest userRequest)
