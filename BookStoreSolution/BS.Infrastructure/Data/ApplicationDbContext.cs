@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using BS.Application.Interfaces;
@@ -15,20 +16,19 @@ namespace BS.Infrastructure.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         private readonly IDateTimeService _dateTime;
-        private readonly IAuthService _authenticatedUser;
+
         private IHttpContextAccessor _httpContextAccessor;
 
         public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options, 
-            IHttpContextAccessor httpContextAccessor, 
-            IDateTimeService dateTime, 
-            IAuthService authenticatedUser
-            ) : base(options)
+            DbContextOptions<ApplicationDbContext> options,
+            IHttpContextAccessor httpContextAccessor,
+            IDateTimeService dateTime
+        ) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             _dateTime = dateTime;
             _httpContextAccessor = httpContextAccessor;
-            _authenticatedUser = authenticatedUser;
+
         }
 
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
@@ -46,58 +46,7 @@ namespace BS.Infrastructure.Data
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
 
-            #region OLD
-
-
-            ////// Get all the entities that inherit from BaseEntity
-            ////// and have a state of Added or Modified
-            ////var entries = ChangeTracker
-            ////    .Entries()
-            ////    .Where(e => e.Entity is BaseEntity && (
-            ////        e.State == EntityState.Added
-            ////        || e.State == EntityState.Modified));
-
-            ////// For each entity we will set the Audit properties
-            ////foreach (var entityEntry in entries)
-            ////{
-            ////    // If the entity state is Added let's set
-            ////    // the CreatedAt and CreatedBy properties
-            ////    if (entityEntry.State == EntityState.Added)
-            ////    {
-            ////        ((BaseEntity)entityEntry.Entity).CreatedDate = DateTime.Now;
-            ////        if (_httpContextAccessor.HttpContext.User != null && _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-            ////        {
-            ////            ((BaseEntity)entityEntry.Entity).CreatedBy = Guid.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            ////        }
-            ////    }
-            ////    else
-            ////    {
-            ////        // If the state is Modified then we don't want
-            ////        // to modify the CreatedAt and CreatedBy properties
-            ////        // so we set their state as IsModified to false
-            ////        Entry((BaseEntity)entityEntry.Entity).Property(p => p.CreatedDate).IsModified = false;
-            ////        Entry((BaseEntity)entityEntry.Entity).Property(p => p.CreatedBy).IsModified = false;
-
-            ////        // In any case we always want to set the properties
-            ////        // ModifiedAt and ModifiedBy
-            ////        ((BaseEntity)entityEntry.Entity).UpdatedDate = DateTime.Now;
-            ////        if (_httpContextAccessor.HttpContext.User != null &&
-            ////            _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-            ////        {
-            ////            ((BaseEntity)entityEntry.Entity).UpdatedBy = Guid.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            ////        }
-            ////    }
-
-
-            ////}
-
-            ////// After we set all the needed properties
-            ////// we call the base implementation of SaveChangesAsync
-            ////// to actually save our entities in the database
-
-            //return await base.SaveChangesAsync(cancellationToken);
-
-            #endregion
+            string userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())
             {
@@ -105,16 +54,29 @@ namespace BS.Infrastructure.Data
                 {
                     case EntityState.Added:
                         entry.Entity.Created = _dateTime.NowUtc;
-                        entry.Entity.CreatedBy = _authenticatedUser.UserId;
+                        entry.Entity.CreatedBy = (string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId));
                         break;
                     case EntityState.Modified:
                         entry.Entity.LastModified = _dateTime.NowUtc;
-                        entry.Entity.LastModifiedBy = _authenticatedUser.UserId;
+                        entry.Entity.LastModifiedBy = (string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId));
                         break;
                 }
             }
-
-            return await base.SaveChangesAsync(cancellationToken);
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException e)
+            {
+                //This either returns a error string, or null if it can’t handle that error
+                var sqlException = e.GetBaseException();
+                if (sqlException != null)
+                {
+                    throw new ApplicationException(sqlException.Message, sqlException.InnerException); //return the error string
+                }
+                throw new ApplicationException("couldn’t handle that error"); //return the error string
+                //couldn’t handle that error, so rethrow
+            }
         }
 
     }
