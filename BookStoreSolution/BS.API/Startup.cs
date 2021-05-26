@@ -11,10 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using BS.API.Filters;
 using BS.API.Middleware;
 using BS.Application;
 using BS.Infrastructure;
+using Serilog;
 
 namespace BS.API
 {
@@ -45,7 +46,9 @@ namespace BS.API
             });
             services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 
-            services.AddControllers();
+            services.AddControllers(options => {
+                options.Filters.Add(typeof(UserActivitiesAttribute));
+            });
 
             services.AddCors(options =>
             {
@@ -67,6 +70,8 @@ namespace BS.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BS.API v1"));
             }
+
+      
 
             app.UseHttpsRedirection();
 

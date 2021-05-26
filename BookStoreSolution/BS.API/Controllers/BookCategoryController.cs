@@ -9,6 +9,7 @@ using BS.Application.Dtos;
 using BS.Application.Services.Interfaces;
 using BS.Domain.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BS.API.Controllers
 {
@@ -16,12 +17,18 @@ namespace BS.API.Controllers
     public class BookCategoryController : BaseApiController
     {
         private readonly IBookCategoryService _bookCategoryService;
-        public BookCategoryController(DbContext context, IBookCategoryService bookCategoryService)
-        {
+        private readonly ILogger<BookCategoryController> _logger;
 
+        public BookCategoryController(DbContext context, IBookCategoryService bookCategoryService, ILogger<BookCategoryController> logger) 
+        {
+          
             _bookCategoryService = bookCategoryService;
+            _logger = logger;
+           _logger.LogInformation($"Enter the {nameof(BookCategoryController)} controller");
+
         }
 
+       
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(List<BookCategoryReadDto>))]
         public async Task<ActionResult> GetBookCategories()
