@@ -11,11 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BookStoreStore.Infrastructure;
+
 using BS.API.Middleware;
 using BS.Application;
-using BS.Infrastructure.Shared;
-using BS.Infrastructure.Identity;
+using BS.Infrastructure;
 
 namespace BS.API
 {
@@ -33,8 +32,6 @@ namespace BS.API
         {
 
             services.AddApplication();
-            services.AddIdentityInfrastructure();
-            services.AddSharedInfrastructure();
             services.AddInfrastructure(Configuration);
 
 

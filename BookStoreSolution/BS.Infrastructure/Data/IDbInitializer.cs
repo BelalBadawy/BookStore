@@ -1,4 +1,4 @@
-namespace BookStoreStore.Infrastructure.Data
+namespace BS.Infrastructure.Data
 {
     public interface IDbInitializer
     {

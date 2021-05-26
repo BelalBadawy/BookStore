@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BS.Application.Interfaces.Repositories;
+﻿using BS.Application.Interfaces.Repositories;
 using BS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BS.Infrastructure.Data.Data.Repositories
+namespace BS.Infrastructure.Data.Repositories
 {
     public class BookCategoryRepositoryAsync : Repository<BookCategory>, IBookCategoryRepositoryAsync
     {

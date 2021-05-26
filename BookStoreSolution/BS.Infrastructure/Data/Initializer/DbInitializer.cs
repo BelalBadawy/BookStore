@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
 using BS.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
-namespace BookStoreStore.Infrastructure.Data.Initializer
+namespace BS.Infrastructure.Data.Initializer
 {
     public class DbInitializer : IDbInitializer
     {

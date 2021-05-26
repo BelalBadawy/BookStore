@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using BookStoreStore.Infrastructure.Data;
 using BS.Application.Interfaces;
-using BS.Infrastructure.Data.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace BS.Infrastructure.Data.Data
+namespace BS.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork, IDisposable
     {

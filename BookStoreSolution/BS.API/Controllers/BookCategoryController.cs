@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BookStoreStore.Infrastructure.Data;
 using BS.API.Infrastructure;
 using BS.Application.Dtos;
 using BS.Application.Services.Interfaces;

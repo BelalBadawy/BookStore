@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using BS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-namespace BookStoreStore.Infrastructure.EntityConfiguration
+
+namespace BS.Infrastructure.Data.EntityConfiguration
 {
     public partial class BookCategoryConfiguration : IEntityTypeConfiguration<BookCategory>
     {
