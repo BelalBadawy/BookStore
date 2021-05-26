@@ -76,7 +76,7 @@ namespace BS.API.Controllers
             {
                 if (response.Succeeded)
                 {
-                    return CreatedAtRoute("GetBookCategory", new { bookCategoryId = response.Data }, response.Data);
+                    return CreatedAtRoute("GetBookCategoryById", new { bookCategoryId = response.Data }, response.Data);
                 }
                 else
                 {
