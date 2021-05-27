@@ -19,32 +19,29 @@ namespace BS.API.Controllers
         private readonly IBookCategoryService _bookCategoryService;
         private readonly ILogger<BookCategoryController> _logger;
 
-        public BookCategoryController(DbContext context, IBookCategoryService bookCategoryService, ILogger<BookCategoryController> logger) 
+        public BookCategoryController(DbContext context, IBookCategoryService bookCategoryService, ILogger<BookCategoryController> logger)
         {
-          
+
             _bookCategoryService = bookCategoryService;
             _logger = logger;
-           _logger.LogInformation($"Enter the {nameof(BookCategoryController)} controller");
+            _logger.LogInformation($"Enter the {nameof(BookCategoryController)} controller");
 
         }
-
-       
+        
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(List<BookCategoryReadDto>))]
         public async Task<ActionResult> GetBookCategories()
         {
             return Ok(await _bookCategoryService.GetAllAsync());
         }
-
-
+        
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(PagedResult<BookCategoryReadDto>))]
         public async Task<ActionResult> GetBookCategoriesPagedList(int pageIndex, int pageSize)
         {
             return Ok(await _bookCategoryService.GetPagedListAsync(null, (o => o.OrderBy(x => x.DisplayOrder)), pageIndex, pageSize));
         }
-
-
+        
         [HttpGet("{bookCategoryId:Guid}", Name = "GetBookCategoryById")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookCategoryReadDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,7 +57,6 @@ namespace BS.API.Controllers
 
             return Ok(bookCategory);
         }
-
 
 
         [HttpPost]
@@ -95,5 +91,71 @@ namespace BS.API.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateBookCategory(BookCategoryUpsertDto bookCategoryUpsertDto)
+        {
+
+            if (bookCategoryUpsertDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Response<Guid> response = await _bookCategoryService.AddAsync(bookCategoryUpsertDto);
+
+            if (response != null)
+            {
+                if (response.Succeeded)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }
+            else
+            {
+                response = new Response<Guid>(SD.ErrorOccurred);
+                return BadRequest(response);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteBookCategory(Guid id)
+        {
+
+            if (id == Guid.Empty)
+            {
+                return BadRequest("id is required.");
+            }
+
+            Response<bool> response = await _bookCategoryService.DeleteAsync(id);
+
+            if (response != null)
+            {
+                if (response.Succeeded)
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return BadRequest(response);
+                }
+            }
+            else
+            {
+                response = new Response<bool>(SD.ErrorOccurred);
+                return BadRequest(response);
+            }
+        }
+
+
     }
 }
