@@ -1,0 +1,4 @@
+﻿dotnet ef database drop
+dotnet ef database update
+dotnet ef migrations add InitialCreate -s .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.API\  -p .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.Infrastructure\ --verbose --msbuildprojectextentionspath obj/local
+dotnet ef database update -s .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.API\ --verbose

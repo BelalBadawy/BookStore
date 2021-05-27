@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using BS.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BS.API.Middleware
@@ -10,10 +11,12 @@ namespace BS.API.Middleware
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlerMiddleware> _logger;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -59,6 +62,7 @@ namespace BS.API.Middleware
             if (result == string.Empty)
             {
                 result = JsonConvert.SerializeObject(new { error = exception.Message });
+                _logger.LogError(result);
             }
 
             return context.Response.WriteAsync(result);
