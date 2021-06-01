@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using BS.Application.Interfaces;
 using BS.Domain.Common;
 using BS.Domain.Entities;
+using BS.Domain.Interfaces;
+using BS.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -40,6 +42,14 @@ namespace BS.Infrastructure.Data
 
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+                {
+                    entityType.AddSoftDeleteQueryFilter();
+                }
+            }
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -48,20 +58,36 @@ namespace BS.Infrastructure.Data
 
             string userId = _httpContextAccessor?.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())
+            foreach (var entry in ChangeTracker.Entries<IAuditable>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.Created = _dateTime.NowUtc;
+                        entry.Entity.CreatedAt = _dateTime.NowUtc;
                         entry.Entity.CreatedBy = (string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId));
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModified = _dateTime.NowUtc;
+                        entry.Entity.LastModifiedAt = _dateTime.NowUtc;
+                        entry.Entity.LastModifiedBy = (string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId));
+                        break;
+                    case EntityState.Deleted:
+                        entry.Entity.LastModifiedAt = _dateTime.NowUtc;
                         entry.Entity.LastModifiedBy = (string.IsNullOrEmpty(userId) ? null : Guid.Parse(userId));
                         break;
                 }
             }
+
+            foreach (var entry in ChangeTracker.Entries<ISoftDelete>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.Entity.SoftDeleted = true;
+                        break;
+                }
+            }
+
             try
             {
                 return await base.SaveChangesAsync(cancellationToken);

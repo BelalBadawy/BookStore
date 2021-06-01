@@ -97,9 +97,9 @@ namespace BS.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime")
-                        .HasColumnName("Created");
+                        .HasColumnName("CreatedAt");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -112,13 +112,22 @@ namespace BS.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("IsActive");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTime?>("LastModifiedAt")
                         .HasColumnType("datetime")
-                        .HasColumnName("LastModified");
+                        .HasColumnName("LastModifiedAt");
 
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifiedBy");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("varbinary(max)")
+                        .HasColumnName("RowVersion");
+
+                    b.Property<bool>("SoftDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("SoftDeleted");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -127,6 +136,8 @@ namespace BS.Infrastructure.Migrations
                         .HasColumnName("Title");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SoftDeleted");
 
                     b.ToTable("BookCategory", "dbo");
                 });
