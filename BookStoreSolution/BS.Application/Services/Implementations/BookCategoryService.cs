@@ -77,9 +77,11 @@ namespace BS.Application.Services.Implementations
                 }
                 else
                 {
-                    BookCategory bookCategory = _mapper.Map<BookCategory>(bookCategoryUpsertDto);
+                    var entityToUpdate = await _unitOfWork.Repository<IBookCategoryRepositoryAsync>().FirstOrDefaultAsync(x => x.Id == bookCategoryUpsertDto.Id);
 
-                    await _unitOfWork.Repository<IBookCategoryRepositoryAsync>().UpdateAsync(bookCategory);
+                    _mapper.Map(bookCategoryUpsertDto, entityToUpdate);
+
+                    await _unitOfWork.Repository<IBookCategoryRepositoryAsync>().UpdateAsync(entityToUpdate);
 
                     int effectedRows = await _unitOfWork.CommitAsync();
                     if (effectedRows != 0)

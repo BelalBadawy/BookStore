@@ -104,7 +104,7 @@ namespace BS.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            Response<Guid> response = await _bookCategoryService.AddAsync(bookCategoryUpsertDto);
+            Response<bool> response = await _bookCategoryService.UpdateAsync(bookCategoryUpsertDto);
 
             if (response != null)
             {
@@ -119,7 +119,7 @@ namespace BS.API.Controllers
             }
             else
             {
-                response = new Response<Guid>(SD.ErrorOccurred);
+                response = new Response<bool>(SD.ErrorOccurred);
                 return BadRequest(response);
             }
         }
