@@ -92,6 +92,30 @@ namespace BS.Infrastructure.Data
             {
                 return await base.SaveChangesAsync(cancellationToken);
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                foreach (var item in ex.Entries)
+                {
+                    if (item.Entity is IDataConcurrency)
+                    {
+                        var currentValues = item.CurrentValues;
+                        var dbValues = item.GetDatabaseValues();
+
+                        foreach (var prop in currentValues.Properties)
+                        {
+                            var currentValue = currentValues[prop];
+                            var dbValue = dbValues[prop];
+                        }
+
+                        // Refresh the original values to bypass next concurrency check
+                        item.OriginalValues.SetValues(dbValues);
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Don’t know handling of concurrency conflict " + item.Metadata.Name);
+                    }
+                }
+            }
             catch (DbUpdateException e)
             {
                 //This either returns a error string, or null if it can’t handle that error
@@ -103,6 +127,8 @@ namespace BS.Infrastructure.Data
                 throw new ApplicationException("couldn’t handle that error"); //return the error string
                 //couldn’t handle that error, so rethrow
             }
+
+            return 0;
         }
 
     }
