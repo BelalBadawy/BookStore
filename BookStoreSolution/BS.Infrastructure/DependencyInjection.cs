@@ -6,9 +6,11 @@ using BS.Domain.Common;
 using BS.Domain.Entities;
 using BS.Infrastructure.Data;
 using BS.Infrastructure.Data.Repositories;
+using BS.Infrastructure.Identity;
 using BS.Infrastructure.Identity.Services;
 using BS.Infrastructure.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -60,17 +62,26 @@ namespace BS.Infrastructure
 
 
 
-            services.Configure<IdentityOptions>(options =>
+            services.Configure<IdentityOptions>(opt =>
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 5;
-                options.Password.RequireLowercase = true;
-                //options.Password.RequiredUniqueChars = 1;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = true;
-                options.User.RequireUniqueEmail = true;
+                opt.Password.RequiredLength = 5;
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireNonAlphanumeric = true;
+                opt.Password.RequiredUniqueChars = 1;
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedAccount = true;
+                opt.SignIn.RequireConfirmedEmail = true;
+                opt.SignIn.RequireConfirmedPhoneNumber = false;
 
             });
+
+
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddScoped<IPermissionChecker, PermissionChecker>();
+
 
             services.AddAuthentication(options =>
             {

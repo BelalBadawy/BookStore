@@ -1,4 +1,6 @@
-﻿dotnet ef database drop --project "BS.Infrastructure" --startup-project "BS.API"
+﻿dotnet tool update --global dotnet-ef
+
+dotnet ef database drop --project "BS.Infrastructure" --startup-project "BS.API"
 dotnet ef database update
 dotnet ef migrations add InitialCreate -s .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.API\  -p .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.Infrastructure\ --verbose --msbuildprojectextentionspath obj/local
 dotnet ef database update -s .\_MyFolders\MyApps\BookStore\BookStoreSolution\BS.API\ --verbose

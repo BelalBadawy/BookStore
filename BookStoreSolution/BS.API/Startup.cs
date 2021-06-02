@@ -46,6 +46,10 @@ namespace BS.API
             });
             services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 
+            services.AddAntiforgery();
+            services.AddMemoryCache();
+            services.AddDistributedMemoryCache();
+
             services.AddControllers(options => {
                 options.Filters.Add(typeof(UserActivitiesAttribute));
             });
@@ -58,6 +62,26 @@ namespace BS.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BS.API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
         }
 
@@ -74,7 +98,7 @@ namespace BS.API
       
 
             app.UseHttpsRedirection();
-
+        //    app.UseSession();
             app.UseRouting();
             
             app.UseAuthorization();
