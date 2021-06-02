@@ -19,9 +19,8 @@ namespace BS.API.Controllers
         private readonly IBookCategoryService _bookCategoryService;
         private readonly ILogger<BookCategoryController> _logger;
 
-        public BookCategoryController(DbContext context, IBookCategoryService bookCategoryService, ILogger<BookCategoryController> logger)
+        public BookCategoryController(IBookCategoryService bookCategoryService, ILogger<BookCategoryController> logger)
         {
-
             _bookCategoryService = bookCategoryService;
             _logger = logger;
             _logger.LogInformation($"Enter the {nameof(BookCategoryController)} controller");

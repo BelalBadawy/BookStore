@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BS.Domain.Common;
 using BS.Domain.Models;
 
 
@@ -12,7 +13,7 @@ namespace BS.Application.Interfaces
     {
         Guid? UserId { get; }
 
-        Task<AuthenticationResponse> AuthenticateAsync(LoginRequest request);
-        //Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
+        Task<Response<AuthenticationResponse>> AuthenticateAsync(LoginModel loginModel);
+        Task<Response<Guid>> RegisterAsync(RegistrationModel registrationModel);
     }
 }
