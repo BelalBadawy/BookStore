@@ -10,6 +10,7 @@ using BS.Application.Interfaces;
 using BS.Application.Services.Interfaces;
 using BS.Domain.Common;
 using BS.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -28,9 +29,8 @@ namespace BS.API.Controllers
             _logger.LogInformation($"Enter the {nameof(AccountController)} controller");
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterAccount(RegistrationModel registrationModel)
         {
@@ -60,9 +60,8 @@ namespace BS.API.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
