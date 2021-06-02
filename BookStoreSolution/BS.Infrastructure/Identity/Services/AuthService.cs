@@ -36,20 +36,22 @@ namespace BS.Infrastructure.Identity.Services
             _signInManager = signInManager;
         }
 
-        public async Task<AuthenticationResponse> AuthenticateAsync(LoginRequest userRequest)
+        public async Task<Response<AuthenticationResponse>> AuthenticateAsync(LoginModel loginModel)
         {
-            var user = await _userManager.FindByEmailAsync(userRequest.Email);
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
 
             if (user == null)
             {
-                throw new Exception($"User with {userRequest.Email} not found.");
+              //  throw new Exception($"User with {loginModel.Email} not found.");
+              return new Response<AuthenticationResponse>($"User with {loginModel.Email} not found.");
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, userRequest.Password, false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password, false, lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
-                throw new Exception($"Credentials for '{userRequest.Email} aren't valid'.");
+                return new Response<AuthenticationResponse>($"Credentials for '{loginModel.Email} aren't valid'.");
+                //throw new Exception($"Credentials for '{loginModel.Email} aren't valid'.");
             }
 
             JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
@@ -62,47 +64,39 @@ namespace BS.Infrastructure.Identity.Services
                 UserName = user.UserName
             };
 
-            return response;
+            return new Response<AuthenticationResponse>(response);
         }
 
-        //public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)
-        //{
-        //    var existingUser = await _userManager.FindByNameAsync(request.UserName);
+        public async Task<Response<Guid>> RegisterAsync(RegistrationModel request)
+        {
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FullName = request.FullName,
+                EmailConfirmed = false,
+                UserName = request.Email
+            };
 
-        //    if (existingUser != null)
-        //    {
-        //        throw new Exception($"Username '{request.UserName}' already exists.");
-        //    }
+            var existingEmail = await _userManager.FindByEmailAsync(request.Email);
 
-        //    var user = new ApplicationUser
-        //    {
-        //        Email = request.Email,
-        //        FirstName = request.FirstName,
-        //        LastName = request.LastName,
-        //        UserName = request.UserName,
-        //        EmailConfirmed = true
-        //    };
+            if (existingEmail == null)
+            {
+                var result = await _userManager.CreateAsync(user, request.Password);
 
-        //    var existingEmail = await _userManager.FindByEmailAsync(request.Email);
-
-        //    if (existingEmail == null)
-        //    {
-        //        var result = await _userManager.CreateAsync(user, request.Password);
-
-        //        if (result.Succeeded)
-        //        {
-        //            return new RegistrationResponse() { UserId = user.Id };
-        //        }
-        //        else
-        //        {
-        //            throw new Exception($"{result.Errors}");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new Exception($"Email {request.Email } already exists.");
-        //    }
-        //}
+                if (result.Succeeded)
+                {
+                    return new Response<Guid>(user.Id);
+                }
+                else
+                {
+                    return new Response<Guid>($"{string.Join("; ", result.Errors.Select(o=>o.Description).ToList())}");
+                }
+            }
+            else
+            {
+                return new Response<Guid>($"Email {request.Email } already exists.");
+            }
+        }
 
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
