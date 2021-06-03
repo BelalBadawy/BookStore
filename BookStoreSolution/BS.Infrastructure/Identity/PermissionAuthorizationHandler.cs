@@ -73,7 +73,7 @@ namespace BS.Infrastructure.Identity
 
             // If user does not have the scope claim, get out of here
             if (context.User.HasClaim(c => c.Type == CustomClaimTypes.Permission &&
-                                           c.Value == requirement.Permission.ToUpper() 
+                                           c.Value.ToUpper() == requirement.Permission.ToUpper() 
                                          //  && c.Issuer == "http://localhost:55445"
                                            ))
             {
