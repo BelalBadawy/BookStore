@@ -105,6 +105,8 @@ namespace BS.Infrastructure.Identity.Services
 
             var roleClaims = new List<Claim>();
 
+            userClaims.Add(new Claim(CustomClaimTypes.Permission,AppPermissions.AppClaim.List));
+
             for (int i = 0; i < roles.Count; i++)
             {
                 roleClaims.Add(new Claim("roles", roles[i]));
@@ -127,7 +129,8 @@ namespace BS.Infrastructure.Identity.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                //  expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: signingCredentials);
             return jwtSecurityToken;
         }

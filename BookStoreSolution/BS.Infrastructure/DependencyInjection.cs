@@ -119,6 +119,13 @@ namespace BS.Infrastructure
                            context.HandleResponse();
                            context.Response.StatusCode = 401;
                            context.Response.ContentType = "application/json";
+                           // Ensure we always have an error and error description.
+                           if (string.IsNullOrEmpty(context.Error))
+                               context.Error = "invalid_token";
+                           if (string.IsNullOrEmpty(context.ErrorDescription))
+                               context.ErrorDescription = "This request requires a valid JWT access token to be provided";
+
+
                            var result = JsonConvert.SerializeObject("401 Not authorized");
                            return context.Response.WriteAsync(result);
                        },
