@@ -2,6 +2,14 @@ namespace BS.Domain.Common
 {
     public static class AppPermissions
     {
+        public static class BookCategory
+        {
+            public const string List = "Permissions.BookCategory.List";
+            public const string View = "Permissions.BookCategory.View";
+            public const string Create = "Permissions.BookCategory.Create";
+            public const string Edit = "Permissions.BookCategory.Edit";
+            public const string Delete = "Permissions.BookCategory.Delete";
+        }
 
         public static class AppClaim
         {

@@ -14,11 +14,11 @@ namespace BS.Application.Services.Interfaces
         Task<Response<Guid>> AddAsync(BookCategoryUpsertDto bookCategoryUpsertDto);
         Task<Response<bool>> UpdateAsync(BookCategoryUpsertDto bookCategoryUpsertDto);
         Task<Response<bool>> DeleteAsync(Guid id);
-        Task<BookCategoryReadDto> GetByIdAsync(Guid id);
-        Task<List<BookCategoryReadDto>> GetAllAsync(Expression<Func<BookCategory, bool>> predicate = null,
+        Task<Response<BookCategoryReadDto>> GetByIdAsync(Guid id);
+        Task<Response<List<BookCategoryReadDto>>> GetAllAsync(Expression<Func<BookCategory, bool>> predicate = null,
             Func<IQueryable<BookCategory>, IOrderedQueryable<BookCategory>> orderBy = null, params Expression<Func<BookCategory, object>>[] includes);
 
-        Task<PagedResult<BookCategoryReadDto>> GetPagedListAsync(Expression<Func<BookCategory, bool>> predicate = null,
+        Task<Response<PagedResult<BookCategoryReadDto>>> GetPagedListAsync(Expression<Func<BookCategory, bool>> predicate = null,
             Func<IQueryable<BookCategory>, IOrderedQueryable<BookCategory>> orderBy = null, int pageIndex = 0,
             int pageSize = 10, params Expression<Func<BookCategory, object>>[] includes);
     }
