@@ -4,7 +4,7 @@ using BS.Domain.Interfaces;
 
 namespace BS.Application.Dtos
 {
-    public class BookCategoryReadDto : IBaseEntity, IAuditable, ISoftDelete, IDataConcurrency
+    public class BookCategoryReadDto
 
     {
      
