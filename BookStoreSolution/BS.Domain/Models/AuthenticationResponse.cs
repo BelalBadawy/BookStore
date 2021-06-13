@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BS.Domain.Models
+﻿namespace BS.Domain.Models
 {
     public class AuthenticationResponse
     {
